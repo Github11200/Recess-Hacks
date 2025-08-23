@@ -22,11 +22,13 @@ async function getData(): Promise<Listing[]> {
 }
 
 export default async function DemoPage() {
-  const data = await getData()
- 
+  const data = await getData();
+
   return (
-    <div className="container mx-auto py-10">
-      <DataTable columns={columns} data={data} />
+    <div className="min-h-[60vh] flex justify-center py-10">
+      <div className="w-full max-w-4xl">
+        <DataTable columns={columns} data={data} />
+      </div>
     </div>
   );
 }
