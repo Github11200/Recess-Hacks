@@ -72,6 +72,8 @@ export async function POST(request: NextRequest) {
         }
 
         jobsArray.push(jobEntry)
+        // TODO: Remove this to get all the jobs
+        break;
       }
       return jobsArray
     })
