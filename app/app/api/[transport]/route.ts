@@ -8,7 +8,7 @@ const handler = createMcpHandler(
       "scrapeLinkedIn",
       "Scrapes LinkedIn for jobs based on the input that was given.",
       {
-        location: z.string().describe("A message with lorem ipsum."),
+        location: z.string().describe("A message with the user's location. Ask the user if you don't have their location."),
         jobTitle: z.string().describe("The title of the job, like \"Restuarant Cleaner.\" The more specific this is the better"),
       },
       async ({ location, jobTitle }) => {

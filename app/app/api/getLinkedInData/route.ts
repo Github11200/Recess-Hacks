@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 import { Job, Params } from "@/lib/interfaces";
+// @ts-ignore
 import TurndownService from 'turndown'
 
 export async function POST(request: NextRequest) {
   const { location, jobTitle }: Params = await request.json();
 
-  let urlParam = "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=Restaurant&location=Delta&geoId=106420447&trk=public_jobs_jobs-search-bar_search-submit&start=1&pageNum=0";
+  let urlParam = `https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=${jobTitle.replaceAll(" ", "%20")}&location=${location.replaceAll(" ", "%20").replaceAll(",", "%2C")}&trk=public_jobs_jobs-search-bar_search-submit&start=1&pageNum=0`;
   if (!urlParam) {
     return new NextResponse("Please provide a URL.", { status: 400 });
   }
@@ -57,6 +58,7 @@ export async function POST(request: NextRequest) {
       return jobElements;
     })
 
+    // @ts-ignore
     const jobs: Job[] = await page.$$eval(".job-search-card", elements => {
       let jobsArray: Job[] = []
       for (let job of elements) {
