@@ -22,7 +22,11 @@ export default function HomePage() {
       const response = await fetch(`/api/getLinkedInData`, {
         body: JSON.stringify(params),
         method: "POST",
-      });
+      })
+        .then((data) => data.json())
+        .then((res) => {
+          console.log(res);
+        });
       if (!response.ok) {
         throw new Error("Failed to capture screenshot.");
       }
