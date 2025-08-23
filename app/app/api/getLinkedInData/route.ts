@@ -1,14 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
+import { Params } from "@/lib/interfaces";
 
-interface Params {
-  location: string;
-  jobTitle: string;
-}
+export async function POST(request: NextRequest) {
+  const { location, jobTitle }: Params = await request.json();
 
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const urlParam = searchParams.get("url");
+  const urlParam = "https://www.linkedin.com/jobs/search";
   if (!urlParam) {
     return new NextResponse("Please provide a URL.", { status: 400 });
   }
@@ -20,17 +17,7 @@ export async function GET(request: NextRequest) {
   }
 
   // Validate the URL is a valid HTTP/HTTPS URL
-  let parsedUrl: URL;
-  try {
-    parsedUrl = new URL(inputUrl);
-    if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
-      return new NextResponse("URL must start with http:// or https://", {
-        status: 400,
-      });
-    }
-  } catch {
-    return new NextResponse("Invalid URL provided.", { status: 400 });
-  }
+  let parsedUrl: URL = new URL(inputUrl);
 
   let browser;
   try {
@@ -46,22 +33,19 @@ export async function GET(request: NextRequest) {
       launchOptions = {
         ...launchOptions,
         args: chromium.args,
-        executablePath: await chromium.executablePath("https://github.com/Sparticuz/chromium/releases/download/v138.0.2/chromium-v138.0.2-pack.x64.tar"),
+        executablePath: await chromium.executablePath("https://github.com/Sparticuz/chromium/releases/download/v138.0.2/chromium-v138.0.2-pack.x64.tar"), // Load the executable from github
       };
     } else {
+      // If we're running locally then just use puppeteer
       puppeteer = await import("puppeteer");
     }
 
     browser = await puppeteer.launch(launchOptions);
     const page = await browser.newPage();
     await page.goto(parsedUrl.toString(), { waitUntil: "networkidle2" });
-    const screenshot = await page.screenshot({ type: "png" });
-    return new NextResponse(screenshot, {
-      headers: {
-        "Content-Type": "image/png",
-        "Content-Disposition": 'inline; filename="screenshot.png"',
-      },
-    });
+    console.log(parsedUrl);
+
+    return new NextResponse(JSON.stringify({ hello: "hi" }));
   } catch (error) {
     console.error(error);
     return new NextResponse(
