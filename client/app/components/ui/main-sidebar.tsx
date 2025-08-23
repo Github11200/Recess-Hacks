@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar } from "@/app/components/ui/app-sidebar";
 
 export function MainSidebar({ children }: { children: React.ReactNode }) {
   return (
