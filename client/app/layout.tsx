@@ -27,18 +27,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SidebarProvider>
-          <div className="flex min-h-screen">
-            <AppSidebar />
-            <main className="flex-1">
-              {/* Put this in a header if you want */}
-              <div className="p-2">
-                <SidebarTrigger />
-              </div>
-              {children}
-            </main>
-          </div>
-        </SidebarProvider>
+        {" "}
+        <main className="flex-1">{children}</main>
       </body>
     </html>
   );

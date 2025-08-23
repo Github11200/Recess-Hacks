@@ -27,9 +27,6 @@ export default function HomePage() {
         .then((res) => {
           console.log(res);
         });
-      if (!response.ok) {
-        throw new Error("Failed to capture screenshot.");
-      }
 
       console.log(params);
     } catch (err) {

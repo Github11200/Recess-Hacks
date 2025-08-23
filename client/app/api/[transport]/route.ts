@@ -4,6 +4,7 @@ import { z } from "zod";
 
 const handler = createMcpHandler(
   async (server) => {
+    // @ts-ignore
     server.tool(
       "scrapeLinkedIn",
       "Scrapes LinkedIn for jobs based on the input that was given.",
