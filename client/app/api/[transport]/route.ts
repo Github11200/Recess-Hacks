@@ -8,17 +8,18 @@ const handler = createMcpHandler(
     server.tool(
       "scrapeLinkedIn",
       "Scrapes LinkedIn for jobs based on the input that was given.",
-      z.object({
+      {
         location: z.string().describe("A message with the user's location. Ask the user if you don't have their location."),
         jobTitle: z.string().describe("The title of the job, like \"Restuarant Cleaner.\" The more specific this is the better"),
-      }),
+      },
       async ({ location, jobTitle }) => {
         let params: Params = {
           location: location,
           jobTitle: jobTitle
         }
-        const data = await fetch("/api/getLinkedInData", {
-          body: JSON.stringify(params)
+        const data = await fetch("http://localhost:3000/api/getLinkedInData", {
+          body: JSON.stringify(params),
+          method: "POST"
         }).then((data) => data.json()).then((jobs: Job[]) => {
           let jobsString = "The following are all the jobs that were scrapped from LinkedIn. Filter out the ones that may not be applicable for the current user and make use of all the information presented when talking:\n\n\n"
           for (let job of jobs) {

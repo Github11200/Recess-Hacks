@@ -1,14 +1,22 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Message } from "@/lib/interfaces";
-import { Cohere } from "@langchain/cohere";
 import Messages from "./messages";
 import { MultiServerMCPClient } from "@langchain/mcp-adapters";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
-import { ChatCohere } from "@langchain/cohere";
 import { ChatMistralAI } from "@langchain/mistralai";
+import {
+  START,
+  END,
+  MessagesAnnotation,
+  StateGraph,
+  MemorySaver,
+} from "@langchain/langgraph";
+import { BufferMemory } from "langchain/memory";
+import { PromptTemplate } from "@langchain/core/prompts";
+import { ChatMessageHistory } from "@langchain/community/stores/message/in_memory";
+import { RunnableWithMessageHistory } from "@langchain/core/runnables";
+import { AgentExecutor, createToolCallingAgent } from "langchain/agents";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { Message } from "@/lib/interfaces";
+import { BaseMessage } from "@langchain/core/messages";
 
 export default async function Chat() {
   const llm = new ChatMistralAI({
@@ -18,6 +26,7 @@ export default async function Chat() {
     apiKey: process.env.MISTRAL_API_KEY,
   });
 
+  // Point to your MCP server route (from route.ts)
   const client = new MultiServerMCPClient({
     throwOnLoadError: true,
     prefixToolNameWithServerName: false,
@@ -26,46 +35,125 @@ export default async function Chat() {
     mcpServers: {
       vercelServer: {
         transport: "http", // or "sse" if your server uses Server-Sent Events
-        url: "http://localhost:3000/api/mcp",
-        // headers if needed for auth, e.g.,
-        // headers: {
-        //   Authorization: "Bearer your-token",
-        // },
-        // Optional SSE config if needed
-        // useNodeEventSource: true,
-        // reconnect: { enabled: true, maxAttempts: 5, delayMs: 2000 }
+        url: "http://localhost:3000/api/mcp", // Make sure this matches your route.ts endpoint
+        // headers: { ... } // Add if needed
       },
     },
   });
 
+  // Fetch tools from your MCP server
   const tools = await client.getTools();
 
+  // const prompt = ChatPromptTemplate.fromMessages([
+  //   ["system", "You are a helpful assistant"],
+  //   ["placeholder", "{chat_history}"],
+  //   ["human", "{input}"],
+  //   ["placeholder", "{agent_scratchpad}"],
+  // ]);
+
+  // Bind tools to your LangChain agent
   const agent = createReactAgent({
-    llm: llm,
+    llm,
     tools,
   });
 
-  // const llmWithTools = llm.bindTools(tools);
+  let messageHistory: null | BaseMessage[] = null;
 
-  const callModel = async () => {
-    const response = await agent.invoke({
-      messages: [
-        {
-          role: "user",
-          content:
-            "I live in Delta, British Columbia, Canada and I am looking for software engineering job.",
-        },
-      ],
+  const sendMessageCallback = async (messages: Message[]): Promise<Message> => {
+    "use server";
+
+    const userMessage: Message = messages[messages.length - 1];
+    let newMessages = [];
+    if (messageHistory !== null) newMessages = [...messageHistory];
+    newMessages.push({ role: "user", content: userMessage.message });
+
+    const agentOutput = agent.invoke({
+      messages: newMessages,
     });
-    console.log(response.messages);
+
+    return {
+      sentBy: "llm",
+      message: "woah",
+    };
   };
 
-  console.log(tools[0].lc_kwargs.schema);
+  let agentOutput1 = await agent.invoke({
+    messages: [
+      {
+        role: "user",
+        content: "Hi, my name is bob!",
+      },
+    ],
+  });
+
+  let messageHistory = agentOutput1.messages;
+
+  // let agentOutput2 = await agent.invoke({
+  //   messages: [
+  //     ...messageHistory,
+  //     { role: "user", content: "What was my name?" },
+  //   ],
+  // });
+
+  // messageHistory = agentOutput2.messages;
+
+  // let agentOutput3 = await agent.invoke({
+  //   messages: [
+  //     ...messageHistory,
+  //     { role: "user", content: "My friend's name is Cod" },
+  //   ],
+  // });
+
+  // messageHistory = agentOutput3.messages;
+
+  // let agentOutput4 = await agent.invoke({
+  //   messages: [
+  //     ...messageHistory,
+  //     { role: "user", content: "What is my friend's name?" },
+  //   ],
+  // });
+
+  // console.log(agentOutput1);
+  // console.log(agentOutput2);
+  // console.log(agentOutput3);
+  // console.log(agentOutput4);
+
+  // const agentExecutor = new AgentExecutor({
+  //   agent,
+  //   tools,
+  // });
+
+  // const response = await agentExecutor.invoke({
+  //   input: "Hi, what model are you?",
+  // });
+  // console.log(response);
+
+  // const memory = new ChatMessageHistory();
+  // const agentExecutorWithMemory = new RunnableWithMessageHistory({
+  //   runnable: agentExecutor,
+  //   getMessageHistory: () => memory,
+  //   inputMessagesKey: "input",
+  //   historyMessagesKey: "chat_history",
+  // });
+
+  // You can inspect the tool schemas if needed
   // await callModel();
 
+  // await fetch("http://localhost:3000/api/getLinkedInData", {
+  //   body: JSON.stringify({
+  //     location: "Delta, British Columbia, Canada",
+  //     jobTitle: "Software Engineer",
+  //   }),
+  //   method: "POST",
+  // })
+  //   .then((data) => data.json())
+  //   .then((res) => {
+  //     console.log(res);
+  //   });
+
   return (
-    <div className="w-[50%] mx-auto flex flex-col items-center h-[100vh] py-4 gap-2">
-      <Button>Click me!</Button>
+    <div>
+      <Messages sendMessageCallback={sendMessageCallback} />
     </div>
   );
 }

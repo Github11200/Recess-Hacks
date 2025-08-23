@@ -29,7 +29,7 @@ async function main() {
   console.log("Connected", client.getServerCapabilities());
 
   const result = await client.listTools();
-  console.log(result);
+  console.log(result.inputSchema);
   client.close();
 }
 

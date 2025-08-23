@@ -6,17 +6,21 @@ import { Message } from "@/lib/interfaces";
 import { OpenAI } from "@langchain/openai";
 import { useState } from "react";
 
-export default function Messages() {
+export default function Messages({
+  sendMessageCallback,
+}: {
+  sendMessageCallback: Function;
+}) {
   const [messages, setMessages] = useState<Message[]>([
     {
       sentBy: "llm",
       message: "Hey there!",
     },
   ]);
+  const [currentMessage, setCurrentMessage] = useState<string>("");
 
   return (
-    <div className="w-[50%] mx-auto flex flex-col items-center h-[100vh] py-4 gap-2">
-      <Messages />
+    <div className="w-[50%] mx-auto flex flex-col items-center h-[100vh] gap-2 py-4">
       <div className="w-full h-full bg-gray-500 rounded-[var(--radius)] overflow-y-scroll p-4">
         {messages.map((messageObject, index) => {
           return (
@@ -33,8 +37,31 @@ export default function Messages() {
         })}
       </div>
       <div className="flex gap-2 w-full">
-        <Input type="text" placeholder="Message..." />
-        <Button>Send</Button>
+        <Input
+          type="text"
+          placeholder="Message..."
+          value={currentMessage}
+          onChange={(e) => {
+            e.preventDefault();
+            setCurrentMessage(e.target.value);
+          }}
+        />
+        <Button
+          onClick={() => {
+            const newArray: Message[] = [
+              ...messages,
+              {
+                sentBy: "user",
+                message: currentMessage,
+              },
+            ];
+            setMessages(newArray);
+            sendMessageCallback(newArray);
+            setCurrentMessage("");
+          }}
+        >
+          Send
+        </Button>
       </div>
     </div>
   );

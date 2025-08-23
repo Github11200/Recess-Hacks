@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
 
     const turndownService = new TurndownService()
     // TODO: Change this from 3 so that you can have more jobs at once
-    for (let i = 0; i < 3; ++i) {
+    for (let i = 0; i < 1; ++i) {
       await page.goto(`https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/${jobs[i].id}`)
 
       const description = await page.evaluate(() => {
