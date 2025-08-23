@@ -6,16 +6,16 @@ async function getData(): Promise<Listing[]> {
   return [
     {
         id: "123",
-        company: "posturai",
+        company: "Posturai",
         salary: 10000,
-        status: "applied",
+        status: "Applied",
         website: "https://posturai.vercel.app/",
     },
     {
         id: "123",
-        company: "posturai",
+        company: "Posturai",
         salary: 10000,
-        status: "applied",
+        status: "Applied",
         website: "https://posturai.vercel.app/",
     },
   ]
@@ -26,7 +26,6 @@ export default async function DemoPage() {
  
   return (
     <div className="container mx-auto py-10">
-      <h2 id="only-once" className="mb-4 font-medium">ONE table should appear below</h2>
       <DataTable columns={columns} data={data} />
     </div>
   );

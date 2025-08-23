@@ -1,4 +1,6 @@
-import { Calendar, User, Home, Search, BookCheck, Settings } from "lucide-react"
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { User, Home, BookCheck } from "lucide-react"
 import {
     Sidebar,
     SidebarContent,
@@ -14,37 +16,24 @@ import {
 const items = [
     {
       title: "Home",
-      url: "#",
+      url: "/",
       icon: Home,
     },
     {
       title: "Chatbot",
-      url: "#",
+      url: "/",
       icon: User,
     },
     {
       title: "Ongoing Job Applications",
-      url: "#",
+      url: "/jobs",
       icon: BookCheck,
-    },
-    {
-      title: "Calendar",
-      url: "#",
-      icon: Calendar,
-    },
-    {
-      title: "Search",
-      url: "#",
-      icon: Search,
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings,
     },
   ]
    
   export function AppSidebar() {
+    const pathname = usePathname();
+
     return (
       <Sidebar>
         <SidebarContent>
@@ -52,20 +41,23 @@ const items = [
             <SidebarGroupLabel>Sidebar</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <a href={item.url}>
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+                {items.map((item) => {
+                  const active = pathname === item.url;
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton asChild data-active={active ? "true" : undefined}>
+                        <Link href={item.url}>
+                          <item.icon />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
       </Sidebar>
-    )
+    );
   }

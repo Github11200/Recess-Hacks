@@ -6,7 +6,7 @@ export type Listing = {
   id: string
   company: string
   salary: number
-  status: "applied" | "pending" | "interview" | "completed"
+  status: "Applied" | "Pending" | "Interview" | "Completed"
   website: string
 }
 
