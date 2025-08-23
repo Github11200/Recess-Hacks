@@ -1,3 +1,4 @@
+import { Job, Params } from "@/lib/interfaces";
 import { createMcpHandler } from "mcp-handler";
 import { z } from "zod";
 
@@ -11,9 +12,25 @@ const handler = createMcpHandler(
         jobTitle: z.string().describe("The title of the job, like \"Restuarant Cleaner.\" The more specific this is the better"),
       },
       async ({ location, jobTitle }) => {
-        return {
-          content: [{ type: "text", text: `Linkedin data here` }],
+        let params: Params = {
+          location: location,
+          jobTitle: jobTitle
         }
+        const data = await fetch("/api/getLinkedInData", {
+          body: JSON.stringify(params)
+        }).then((data) => data.json()).then((jobs: Job[]) => {
+          let jobsString = "The following are all the jobs that were scrapped from LinkedIn. Filter out the ones that may not be applicable for the current user and make use of all the information presented when talking:\n\n\n"
+          for (let job of jobs) {
+            jobsString += `Job title: ${job.title}\n`
+            jobsString += `Job company: ${job.company}\n`
+            jobsString += `Link to job's LinkedIn page: ${job.link}\n\n`
+            jobsString += `The following is the description of the job directly from the LinkedIn page:\n${job.description}\n\n\n`
+          }
+          return {
+            content: [{ type: "text", text: jobsString }],
+          }
+        })
+        return data;
       }
     );
   },
