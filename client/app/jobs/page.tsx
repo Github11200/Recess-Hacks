@@ -15,9 +15,23 @@ async function getData(): Promise<Listing[]> {
         id: "123",
         company: "Posturai",
         salary: 10000,
-        status: "Applied",
+        status: "Pending",
         website: "https://posturai.vercel.app/",
     },
+    {
+      id: "123",
+      company: "Posturai",
+      salary: 10000,
+      status: "Interview",
+      website: "https://posturai.vercel.app/",
+  },
+  {
+    id: "123",
+    company: "Posturai",
+    salary: 10000,
+    status: "Completed",
+    website: "https://posturai.vercel.app/",
+},
   ]
 }
 
