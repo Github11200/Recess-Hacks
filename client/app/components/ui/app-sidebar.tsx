@@ -1,4 +1,4 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
+import { Calendar, User, Home, Search, BookCheck, Settings } from "lucide-react"
 import {
     Sidebar,
     SidebarContent,
@@ -18,9 +18,14 @@ const items = [
       icon: Home,
     },
     {
-      title: "Inbox",
+      title: "Chatbot",
       url: "#",
-      icon: Inbox,
+      icon: User,
+    },
+    {
+      title: "Ongoing Job Applications",
+      url: "#",
+      icon: BookCheck,
     },
     {
       title: "Calendar",
@@ -44,7 +49,7 @@ const items = [
       <Sidebar>
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel>Application</SidebarGroupLabel>
+            <SidebarGroupLabel>Sidebar</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {items.map((item) => (
