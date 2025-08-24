@@ -1,3 +1,5 @@
+import React, { JSX } from "react";
+
 interface Params {
   location: string;
   jobTitle: string;
@@ -14,6 +16,8 @@ interface Job {
 interface Message {
   sentBy: "user" | "llm";
   message: string;
+  tableElement?: React.JSX.Element;
+  isTableData?: boolean;
 }
 
 interface Resume {

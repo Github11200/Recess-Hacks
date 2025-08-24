@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Message, Resume } from "@/lib/interfaces";
-import { useState } from "react";
+import React, { useState } from "react";
 import Markdown from "markdown-to-jsx";
 import {
   Table,
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/table";
 import { jsPDF } from "jspdf";
 import { MdTextRender } from "jspdf-md-renderer";
+import parse from "html-react-parser";
 
 import { columns, Listing } from "./columns"
 import { DataTable } from "./data-table"
@@ -258,7 +259,7 @@ export default function Chat() {
               } rounded-[var(--radius)]`}
             >
               {messageObject.sentBy === "llm" ? "Assistant" : "User"}:{" "}
-              <Markdown>{messageObject.message}</Markdown>
+              {messageObject.message}
             </div>
           );
         })}
