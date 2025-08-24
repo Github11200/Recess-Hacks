@@ -9,8 +9,8 @@ const handler = createMcpHandler(
       "scrapeLinkedIn",
       "Scrapes LinkedIn for jobs based on the input that was given.",
       {
-        location: z.string().describe("A message with the user's location. DO NOT USE THE TOOL IF YOU DON'T HAVE THE USER'S LOCATION."),
-        jobTitle: z.string().describe("The title of the job, like \"Restuarant Cleaner.\" DO NOT USE THE TOOL IF YOU DON'T HAVE THE TITLE OF THE JOB THE USER IS LOOKNG FOR."),
+        location: z.string().describe("A message with the user's location. DO NOT USE THE TOOL IF YOU DON'T HAVE THE USER'S LOCATION. You cannot just say \"User's location\", you need an actual city that the user lives in."),
+        jobTitle: z.string().describe("The title of the job, like \"Restuarant Cleaner.\" DO NOT USE THE TOOL IF YOU DON'T HAVE THE TITLE OF THE JOB THE USER IS LOOKNG FOR. You cannot just say \"job title\", actually ask the user for the title."),
       },
       async ({ location, jobTitle }) => {
         let params: Params = {
@@ -52,7 +52,7 @@ const handler = createMcpHandler(
     // @ts-ignore
     server.tool(
       "generateResume",
-      "Generates a resume from an interface and returns JSON data which is then converted to a downloadable PDF for the user",
+      "Generates a resume from the given properties and returns some JSON data which is then converted to a downloadable PDF for the user",
       {
         personalInfo: z.object({
           name: z.string().describe("The candidate’s full legal name as it should appear on the resume."),
@@ -141,7 +141,7 @@ const handler = createMcpHandler(
           description: "Scrapes LinkedIn for jobs based on the input that was given.",
         },
         generateResume: {
-          description: "Provide an object of the resume following the interface given and a JSON object will be returned which you can directly return to the user."
+          description: "Generates some JSON data of a resume based on the schema given. You can provide dummy data or real data depending on what the user wants."
         },
         interviewQuestions: {
           description: "This will allow you to generate a list of interview questions to ask the user so that they can practice before going into an actual job interview."
