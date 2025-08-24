@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { User, Home, BookCheck } from "lucide-react"
@@ -38,7 +39,16 @@ const items = [
       <Sidebar>
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel>Sidebar</SidebarGroupLabel>
+            <SidebarGroupLabel className="flex flex-col items-center pt-6 mb-32">
+              <Image
+                src="/logo.png"
+                alt="Sidebar Logo"
+                width={80}
+                height={80}
+                className="object-contain mb-2"
+              />
+              <span className="text-lg font-semibold self-start">Sidebar</span>
+            </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {items.map((item) => {
