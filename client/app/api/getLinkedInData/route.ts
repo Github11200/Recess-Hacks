@@ -7,6 +7,9 @@ import TurndownService from 'turndown'
 export async function POST(request: NextRequest) {
   const { location, jobTitle }: Params = await request.json();
 
+  console.log(location);
+  console.log(jobTitle);
+
   let urlParam = `https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=${jobTitle.replaceAll(" ", "%20")}&location=${location.replaceAll(" ", "%20").replaceAll(",", "%2C")}&trk=public_jobs_jobs-search-bar_search-submit&start=1&pageNum=0`;
   if (!urlParam) {
     return new NextResponse("Please provide a URL.", { status: 400 });

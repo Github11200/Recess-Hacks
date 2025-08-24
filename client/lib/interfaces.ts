@@ -16,15 +16,15 @@ interface Job {
 interface Message {
   sentBy: "user" | "llm";
   message: string;
-  tableElement?: React.JSX.Element;
-  isTableData?: boolean;
+  jsxElement?: React.JSX.Element;
+  isJsxElement?: boolean;
 }
 
 interface Resume {
   personalInfo: {
-    fullName: string;
+    name: string;
     email: string;
-    phoneNumber?: string;
+    phone?: string;
     LinkedIn?: string;
     GitHub?: string;
     website?: string;

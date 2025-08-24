@@ -20,6 +20,7 @@ import parse from "html-react-parser";
 
 import { columns, Listing } from "./columns";
 import { DataTable } from "./data-table";
+import Link from "next/link";
 
 function generateResumePDF(resume) {
   const doc = new jsPDF();
@@ -191,9 +192,7 @@ export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([
     {
       sentBy: "llm",
-      message: "",
-      isTableData: true,
-      tableElement: <DataTable columns={columns} data={data} />,
+      message: "Hey there!",
     },
   ]);
   const [currentMessage, setCurrentMessage] = useState<string>("");
@@ -230,11 +229,19 @@ export default function Chat() {
             ...newArray,
             {
               sentBy: "llm",
-              message: `[Link to PDF](${URL.createObjectURL(generatedPDF)})`,
+              message: "",
+              isJsxElement: true,
+              jsxElement: (
+                <Link href={URL.createObjectURL(generatedPDF)}>
+                  <Button>Download PDF</Button>
+                </Link>
+              ),
             },
           ]);
           console.log("done");
         } else if (res.message.includes("/table")) {
+          console.log(res.message.substring(res.message.indexOf("[")));
+
           const data = JSON.parse(
             res.message.substring(res.message.indexOf("["))
           );
@@ -244,8 +251,8 @@ export default function Chat() {
             {
               sentBy: "llm",
               message: "",
-              isTableData: true,
-              tableElement: <DataTable columns={columns} data={data} />,
+              isJsxElement: true,
+              jsxElement: <DataTable columns={columns} data={data} />,
             },
           ]);
         } else setMessages([...newArray, res]);
@@ -263,11 +270,11 @@ export default function Chat() {
                 messageObject.sentBy === "llm"
                   ? "bg-[var(--secondary)]"
                   : "border-1 border-gray"
-              } rounded-[var(--radius)] ${index !== 0 && "pt-2"}`}
+              } rounded-[var(--radius)] ${index !== 0 && "mt-2"}`}
             >
               {messageObject.sentBy === "llm" ? "Assistant" : "User"}:{" "}
-              {messageObject.isTableData
-                ? messageObject.tableElement
+              {messageObject.isJsxElement
+                ? messageObject.jsxElement
                 : messageObject.message}
             </div>
           );

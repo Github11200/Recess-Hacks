@@ -17,16 +17,7 @@ export const columns: ColumnDef<Listing>[] = [
   },
   {
     accessorKey: "title",
-    header: () => <div>Title</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("salary"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount);
-
-      return <div className="font-medium">{formatted}</div>;
-    },
+    header: "Title",
   },
   {
     accessorKey: "link",

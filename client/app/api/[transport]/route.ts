@@ -20,14 +20,28 @@ const handler = createMcpHandler(
         const data = await fetch("http://localhost:3000/api/getLinkedInData", {
           body: JSON.stringify(params),
           method: "POST"
-        }).then((data) => data.json()).then((jobs: Job[]) => {
-          let jobsString = "The following are all the jobs that were scrapped from LinkedIn. Filter out the ones that may not be applicable for the current user and make use of all the information presented when talking:\n\n\n"
+        }).then((data) => data.json()).then(async (jobs: Job[]) => {
+          let jobsString = "/table["
+          let i = 0;
           for (let job of jobs) {
-            jobsString += `Job title: ${job.title}\n`
-            jobsString += `Job company: ${job.company}\n`
-            jobsString += `Link to job's LinkedIn page: ${job.link}\n\n`
-            jobsString += `The following is the description of the job directly from the LinkedIn page:\n${job.description}\n\n\n`
+            const shortenedDescription = await fetch("http://localhost:3000/api/shorten", {
+              body: JSON.stringify(job.description),
+              method: "POST"
+            }).then((data) => data.json()).then((res) => {
+              return res
+            })
+
+            jobsString += `{
+              "title": "${job.title}",
+              "company": "${job.company}",
+              "link": "${job.link}",
+              "description": "${shortenedDescription}"
+            }` + (i !== jobs.length - 1 ? "," : "")
+            console.log("shortened: " + shortenedDescription);
+            ++i
           }
+          jobsString += "]"
+
           return {
             content: [{ type: "text", text: jobsString }],
           }
@@ -41,9 +55,9 @@ const handler = createMcpHandler(
       "Generates a resume from an interface and returns JSON data which is then converted to a downloadable PDF for the user",
       {
         personalInfo: z.object({
-          fullName: z.string().describe("The candidate’s full legal name as it should appear on the resume."),
+          name: z.string().describe("The candidate’s full legal name as it should appear on the resume."),
           email: z.string().describe("The primary email address for the candidate to be contacted."),
-          phoneNumber: z.string().optional().describe("Optional contact phone number for the candidate."),
+          phone: z.string().optional().describe("Optional contact phone number for the candidate."),
           LinkedIn: z.string().optional().describe("Optional LinkedIn profile URL for the candidate."),
           GitHub: z.string().optional().describe("Optional GitHub profile URL for the candidate."),
           website: z.string().optional().describe("Optional personal or professional website of the candidate."),

@@ -4,12 +4,14 @@ import { MultiServerMCPClient } from "@langchain/mcp-adapters";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import { ChatMistralAI } from "@langchain/mistralai";
 import { systemPromptString } from "@/lib/prompts";
+import { ChatVertexAI } from "@langchain/google-vertexai";
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import { ChatOllama } from "@langchain/ollama";
 
-const llm = new ChatMistralAI({
-  model: "mistral-large-latest",
+const llm = new ChatOllama({
+  model: "llama3.1",
   temperature: 0,
   maxRetries: 2,
-  apiKey: process.env.MISTRAL_API_KEY,
 });
 
 // Point to your MCP server route (from route.ts)
