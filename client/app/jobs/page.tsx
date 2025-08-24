@@ -1,38 +1,42 @@
-import { columns, Listing } from "./columns"
-import { DataTable } from "./data-table"
+import { columns } from "./columns";
+import { Listing } from "@/lib/interfaces";
+import { DataTable } from "./data-table";
 
 async function getData(): Promise<Listing[]> {
   // Data from chat bot goes here
   return [
     {
-        id: "123",
-        company: "Posturai",
-        salary: 10000,
-        status: "Applied",
-        website: "https://posturai.vercel.app/",
+      title: "SWE",
+      company: "Posturai",
+      status: "Applied",
+      link: "https://posturai.vercel.app/",
+      description: "Company description",
     },
     {
-        id: "123",
-        company: "Posturai",
-        salary: 10000,
-        status: "Pending",
-        website: "https://posturai.vercel.app/",
-    },
-    {
+      title: "SWE",
       id: "123",
       company: "Posturai",
-      salary: 10000,
+      description: "Company description",
+      status: "Pending",
+      link: "https://posturai.vercel.app/",
+    },
+    {
+      title: "SWE",
+      id: "123",
+      company: "Posturai",
+      description: "Company description",
       status: "Interview",
-      website: "https://posturai.vercel.app/",
-  },
-  {
-    id: "123",
-    company: "Posturai",
-    salary: 10000,
-    status: "Completed",
-    website: "https://posturai.vercel.app/",
-},
-  ]
+      link: "https://posturai.vercel.app/",
+    },
+    {
+      title: "SWE",
+      id: "123",
+      company: "Posturai",
+      description: "Company description",
+      status: "Completed",
+      link: "https://posturai.vercel.app/",
+    },
+  ];
 }
 
 export default async function DemoPage() {

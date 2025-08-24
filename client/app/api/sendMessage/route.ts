@@ -46,6 +46,8 @@ const systemPrompt = {
 export async function POST(request: NextRequest) {
   const messages: Message[] = await request.json();
 
+  console.log(messages[messages.length - 1]);
+
   const agentOutput = await agent.invoke({
     messages: [systemPrompt, ...messages.map((msg) => ({
       role: msg.sentBy === "llm" ? "assistant" : "user",

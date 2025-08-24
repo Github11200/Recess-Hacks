@@ -18,21 +18,21 @@ import { jsPDF } from "jspdf";
 import { MdTextRender } from "jspdf-md-renderer";
 import parse from "html-react-parser";
 
-import { columns, Listing } from "./columns";
+import { columns } from "./columns";
 import { DataTable } from "./data-table";
 import Link from "next/link";
 
-function generateResumePDF(resume) {
+function generateResumePDF(resume: Resume) {
   const doc = new jsPDF();
 
   // Header - Personal Info
   doc.setFontSize(18);
-  doc.text(resume.personalInfo.fullName, 10, 20);
+  doc.text(resume.personalInfo.name, 10, 20);
 
   doc.setFontSize(11);
   doc.text(`Email: ${resume.personalInfo.email}`, 10, 30);
-  if (resume.personalInfo.phoneNumber)
-    doc.text(`Phone: ${resume.personalInfo.phoneNumber}`, 10, 36);
+  if (resume.personalInfo.phone)
+    doc.text(`Phone: ${resume.personalInfo.phone}`, 10, 36);
   if (resume.personalInfo.LinkedIn)
     doc.text(`LinkedIn: ${resume.personalInfo.LinkedIn}`, 10, 42);
   if (resume.personalInfo.GitHub)
@@ -192,7 +192,8 @@ export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([
     {
       sentBy: "llm",
-      message: "Hey there!",
+      message:
+        "Hey there! I'm a chatbot that can help you find jobs, create a resume and practice some interview questions! Let me know what you'd like to do.",
     },
   ]);
   const [currentMessage, setCurrentMessage] = useState<string>("");
@@ -217,10 +218,33 @@ export default function Chat() {
     })
       .then((data) => data.json())
       .then((res: Message) => {
-        if (res.message.includes("/resume")) {
+        if (res.message.includes("/table")) {
+          console.log(res.message.substring(res.message.indexOf("[")));
+
+          const data = JSON.parse(
+            res.message.substring(
+              res.message.indexOf("["),
+              res.message.lastIndexOf("]") + 1
+            )
+          );
+          console.log(data);
+          setMessages([
+            ...newArray,
+            {
+              sentBy: "llm",
+              message: "",
+              isJsxElement: true,
+              jsxElement: <DataTable columns={columns} data={data} />,
+            },
+          ]);
+        } else if (res.message.includes("{") && res.message.includes("}")) {
           console.log(res.message);
-          let jsonString = res.message.replace(/^\/resume/, "");
-          const resume: Resume = JSON.parse(jsonString);
+          const data = res.message.substring(
+            res.message.indexOf("{"),
+            res.message.lastIndexOf("}") + 1
+          );
+
+          const resume: Resume = JSON.parse(data);
 
           const generatedPDF = generateResumePDF(resume);
           setBlob(generatedPDF);
@@ -232,27 +256,84 @@ export default function Chat() {
               message: "",
               isJsxElement: true,
               jsxElement: (
-                <Link href={URL.createObjectURL(generatedPDF)}>
+                <Link href={URL.createObjectURL(generatedPDF)} className="ml-2">
                   <Button>Download PDF</Button>
                 </Link>
               ),
             },
           ]);
           console.log("done");
-        } else if (res.message.includes("/table")) {
-          console.log(res.message.substring(res.message.indexOf("[")));
-
-          const data = JSON.parse(
+        } else if (res.message.includes("/questions")) {
+          console.log(res.message);
+          const questions: string[] = JSON.parse(
             res.message.substring(res.message.indexOf("["))
           );
-          console.log(data);
           setMessages([
             ...newArray,
             {
               sentBy: "llm",
               message: "",
               isJsxElement: true,
-              jsxElement: <DataTable columns={columns} data={data} />,
+              jsxElement: (
+                <div className="flex gap-2 flex-col">
+                  {questions.map((question, index) => (
+                    <div key={index}>
+                      <p>{question}</p>
+                      <Input
+                        id={index.toString()}
+                        type="text"
+                        className="mt-2"
+                        placeholder="Answer..."
+                      />
+                    </div>
+                  ))}
+                  <Button
+                    className="mt-2"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      let questionsAndAnswers: {
+                        question: string;
+                        answer: string;
+                      }[] = [];
+                      for (let i = 0; i < questions.length; ++i)
+                        questionsAndAnswers.push({
+                          question: questions[i],
+                          answer: document.querySelector(
+                            `input[id="${i.toString()}"]`
+                          ).value,
+                        });
+
+                      let questionsAndAnswersString = "";
+                      for (let i = 0; i < questionsAndAnswers.length; ++i) {
+                        questionsAndAnswersString +=
+                          "\nQuestion: " + questionsAndAnswers[i].question;
+                        questionsAndAnswersString +=
+                          "\nAnswer: " + questionsAndAnswers[i].answer + "\n";
+                      }
+
+                      console.log(questionsAndAnswersString);
+                      fetch("/api/feedback", {
+                        body: JSON.stringify([
+                          ...messages,
+                          {
+                            sentBy: "user",
+                            message: questionsAndAnswersString,
+                          },
+                        ]),
+                        method: "POST",
+                      })
+                        .then((data) => data.json())
+                        .then((res) => {
+                          console.log(res);
+                          document.querySelector("p#feedback").innerHTML = res;
+                        });
+                    }}
+                  >
+                    Submit
+                  </Button>
+                  <p id="feedback" className="mt-2"></p>
+                </div>
+              ),
             },
           ]);
         } else setMessages([...newArray, res]);

@@ -1,14 +1,8 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-
-export type Listing = {
-  id?: string;
-  title: string;
-  description: string;
-  company: string;
-  link: string;
-};
+import Link from "next/link";
+import { Listing } from "@/lib/interfaces";
 
 export const columns: ColumnDef<Listing>[] = [
   {
@@ -22,6 +16,14 @@ export const columns: ColumnDef<Listing>[] = [
   {
     accessorKey: "link",
     header: "Link",
+    cell: ({ getValue }) => {
+      const url = getValue() as string;
+      return (
+        <Link href={url} target="_blank">
+          Link
+        </Link>
+      );
+    },
   },
   {
     accessorKey: "description",

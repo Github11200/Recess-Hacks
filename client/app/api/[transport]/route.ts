@@ -1,4 +1,4 @@
-import { Job, Params, Resume } from "@/lib/interfaces";
+import { Email, Job, Listing, Params, Resume } from "@/lib/interfaces";
 import { createMcpHandler } from "mcp-handler";
 import { z } from "zod";
 
@@ -40,10 +40,10 @@ const handler = createMcpHandler(
             console.log("shortened: " + shortenedDescription);
             ++i
           }
-          jobsString += "] DO NOT MODIFY THIS STRING AT ALL."
+          jobsString += "]"
 
           return {
-            content: [{ type: "text", text: jobsString }],
+            content: [{ type: "text", text: jobsString + " DO NOT MODIFY" }],
           }
         })
         return data;
@@ -90,13 +90,49 @@ const handler = createMcpHandler(
         certifications: z.array(z.string()).optional().describe("Any additional certifications, courses, or credentials."),
       },
       async (resume: Resume) => {
-        console.log(resume);
-
+        console.log("/resume" + JSON.stringify(resume));
         return {
-          content: [{ type: "text", text: "/resume" + JSON.stringify(resume) }]
+          content: [{ type: "text", text: "/resume" + JSON.stringify(resume) + " DO NOT MODIFY THIS DATA AT ALL, RETURN IT AS IS TO THE USER." }]
         }
       }
-    )
+    ),
+      // @ts-ignore
+      // server.tool(
+      //   "addApplication",
+      //   "If the user has submitted an application to the company then this adds it to IndexedDB to be displayed for the user.",
+      //   {
+      //     jobTitle: z.string().describe("The title of the job, e.g. Resturant manager, Software engineer, etc."),
+      //     company: z.string().describe("The name of the company"),
+      //     link: z.string().describe("The link to the LinkedIn page from where the information was originally scraped"),
+      //     description: z.string().describe("The description of the job, e.g. As a software engineer you'll be focused on creating/maintaining infrastructure")
+      //   },
+      //   async ({ jobTitle, company, link, description }) => {
+      //     const listing: Listing = {
+      //       title: jobTitle,
+      //       company: company,
+      //       link: link,
+      //       status: "Applied",
+      //       description: description
+      //     }
+      //     return {
+      //       content: [{ type: "text", text: "/addApplication" + JSON.stringify(listing) }]
+      //     }
+      //   }
+      // ),
+      // @ts-ignore
+      server.tool(
+        "interviewQuestions",
+        "If the user ask for a list of resume questions then provide them with it so that they can practice before an interview. Make these questions relevant to the job descripion.",
+        {
+          description: z.string().describe("The description of the job that the user is applying to"),
+          questions: z.array(z.string().describe("An individual interview quesion that may be asked")).describe("The list of all the interview questions to ask")
+        },
+        async ({ questions }) => {
+          return {
+            content: [{ type: "text", text: "/questions" + JSON.stringify(questions) + " DO NOT MODIFY" }]
+          }
+        }
+      )
   },
   {
     capabilities: {
@@ -106,7 +142,10 @@ const handler = createMcpHandler(
         },
         generateResume: {
           description: "Provide an object of the resume following the interface given and a JSON object will be returned which you can directly return to the user."
-        }
+        },
+        interviewQuestions: {
+          description: "This will allow you to generate a list of interview questions to ask the user so that they can practice before going into an actual job interview."
+        },
       },
     },
   },

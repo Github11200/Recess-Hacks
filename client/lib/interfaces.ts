@@ -62,4 +62,19 @@ interface Resume {
   interests?: string[];
 }
 
-export type { Message, Params, Job, Resume }
+interface Email {
+  recepient: string;
+  subject: string;
+  body: string;
+};
+
+interface Listing {
+  id?: string;
+  title: string;
+  description: string;
+  company: string;
+  link: string;
+  status: "Applied" | "Pending" | "Interview" | "Completed";
+};
+
+export type { Message, Params, Job, Resume, Email, Listing }
