@@ -202,6 +202,48 @@ export default function Chat() {
   const [url, setUrl] = useState<string | null>(null);
   const doc = new jsPDF();
 
+  const callback = () => {
+    if (currentMessage === "") return;
+    setCurrentMessage("");
+    let newArray: Message[] = [
+      ...messages,
+      {
+        sentBy: "user",
+        message: currentMessage,
+      },
+    ];
+    setMessages(newArray);
+    fetch("/api/sendMessage", {
+      body: JSON.stringify(newArray),
+      method: "POST",
+    })
+      .then((data) => data.json())
+      .then((res: Message) => {
+        if (res.message.includes("/resume")) {
+          console.log(res.message);
+          let jsonString = res.message.replace(/^\/resume/, "");
+          const resume: Resume = JSON.parse(jsonString);
+
+          const generatedPDF = generateResumePDF(resume);
+          setBlob(generatedPDF);
+          setUrl(URL.createObjectURL(generatedPDF));
+          setMessages([
+            ...newArray,
+            {
+              sentBy: "llm",
+              message: `[Link to PDF](${URL.createObjectURL(generatedPDF)})`,
+            },
+          ]);
+          console.log("done");
+        } else if (res.message.includes("/table")) {
+          const data = JSON.parse(
+            res.message.substring(res.message.indexOf("["))
+          );
+          console.log(data);
+        } else setMessages([...newArray, res]);
+      });
+  };
+
   return (
     <div className="w-[50%] mx-auto flex flex-col items-center h-[100vh] gap-2 py-4">
       <div className="w-full h-full bg-[var(--card-primary)] rounded-[var(--radius)] overflow-y-scroll p-4 border-1 border-gray">
@@ -212,7 +254,7 @@ export default function Chat() {
               className={`p-2 ${
                 messageObject.sentBy === "llm"
                   ? "bg-[var(--secondary)]"
-                  : "bg-gray-300"
+                  : "border-1 border-gray"
               } rounded-[var(--radius)]`}
             >
               {messageObject.sentBy === "llm" ? "Assistant" : "User"}:{" "}
@@ -230,44 +272,14 @@ export default function Chat() {
             e.preventDefault();
             setCurrentMessage(e.target.value);
           }}
+          onKeyUp={(e) => {
+            e.preventDefault();
+            if (e.key === "Enter") callback();
+          }}
         />
         <Button
           onClick={() => {
-            setCurrentMessage("");
-            let newArray: Message[] = [
-              ...messages,
-              {
-                sentBy: "user",
-                message: currentMessage,
-              },
-            ];
-            setMessages(newArray);
-            fetch("/api/sendMessage", {
-              body: JSON.stringify(newArray),
-              method: "POST",
-            })
-              .then((data) => data.json())
-              .then((res: Message) => {
-                if (res.message.includes("/resume")) {
-                  console.log(res.message);
-                  let jsonString = res.message.replace(/^\/resume/, "");
-                  const resume: Resume = JSON.parse(jsonString);
-
-                  const generatedPDF = generateResumePDF(resume);
-                  setBlob(generatedPDF);
-                  setUrl(URL.createObjectURL(generatedPDF));
-                  setMessages([
-                    ...newArray,
-                    {
-                      sentBy: "llm",
-                      message: `[Link to PDF](${URL.createObjectURL(
-                        generatedPDF
-                      )})`,
-                    },
-                  ]);
-                  console.log("done");
-                } else setMessages([...newArray, res]);
-              });
+            callback();
           }}
         >
           Send

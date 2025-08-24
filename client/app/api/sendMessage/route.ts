@@ -6,7 +6,7 @@ import { ChatMistralAI } from "@langchain/mistralai";
 import { systemPromptString } from "@/lib/prompts";
 
 const llm = new ChatMistralAI({
-  model: "magistral-medium-latest",
+  model: "mistral-large-latest",
   temperature: 0,
   maxRetries: 2,
   apiKey: process.env.MISTRAL_API_KEY,
