@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@igor2017/node-latex": "^3.1.0",
     "@inngest/agent-kit": "^0.9.0",
     "@langchain/cohere": "^0.3.4",
     "@langchain/community": "^0.3.53",
@@ -33,7 +34,10 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "inngest": "^3.40.1",
+    "jspdf": "^3.0.1",
+    "jspdf-md-renderer": "^1.8.3",
     "langchain": "^0.3.31",
+    "latex2pdf": "^1.0.1",
     "lucide-react": "^0.541.0",
     "markdown-to-jsx": "^7.7.13",
     "mcp-handler": "^1.0.1",
@@ -41,6 +45,7 @@
     "puppeteer-core": "^24.17.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "rimraf": "^6.0.1",
     "tailwind-merge": "^3.3.1",
     "turndown": "^7.2.1",
     "uuid": "^11.1.0",

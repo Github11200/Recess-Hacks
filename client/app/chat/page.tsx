@@ -2,10 +2,177 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Message } from "@/lib/interfaces";
-import { OpenAI } from "@langchain/openai";
+import { Message, Resume } from "@/lib/interfaces";
 import { useState } from "react";
 import Markdown from "markdown-to-jsx";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { jsPDF } from "jspdf";
+import { MdTextRender } from "jspdf-md-renderer";
+
+function generateResumePDF(resume) {
+  const doc = new jsPDF();
+
+  // Header - Personal Info
+  doc.setFontSize(18);
+  doc.text(resume.personalInfo.fullName, 10, 20);
+
+  doc.setFontSize(11);
+  doc.text(`Email: ${resume.personalInfo.email}`, 10, 30);
+  if (resume.personalInfo.phoneNumber)
+    doc.text(`Phone: ${resume.personalInfo.phoneNumber}`, 10, 36);
+  if (resume.personalInfo.LinkedIn)
+    doc.text(`LinkedIn: ${resume.personalInfo.LinkedIn}`, 10, 42);
+  if (resume.personalInfo.GitHub)
+    doc.text(`GitHub: ${resume.personalInfo.GitHub}`, 10, 48);
+  if (resume.personalInfo.website)
+    doc.text(`Website: ${resume.personalInfo.website}`, 10, 54);
+
+  let y = 65;
+
+  // Skills
+  if (resume.skills && resume.skills.length > 0) {
+    doc.setFontSize(14);
+    doc.text("Skills", 10, y);
+    y += 6;
+    doc.setFontSize(11);
+    doc.text(resume.skills.join(", "), 10, y);
+    y += 10;
+  }
+
+  // Education
+  if (resume.education && resume.education.length > 0) {
+    doc.setFontSize(14);
+    doc.text("Education", 10, y);
+    y += 6;
+    doc.setFontSize(11);
+    resume.education.forEach((ed) => {
+      doc.text(
+        `${ed.institution} - ${ed.degree}${ed.major ? ", " + ed.major : ""}`,
+        10,
+        y
+      );
+      y += 6;
+      if (ed.location) {
+        doc.text(`Location: ${ed.location}`, 10, y);
+        y += 6;
+      }
+      if (ed.startDate || ed.endDate) {
+        doc.text(`Period: ${ed.startDate || ""} - ${ed.endDate || ""}`, 10, y);
+        y += 6;
+      }
+      if (ed.additionalDetails) {
+        doc.text(`Details: ${ed.additionalDetails}`, 10, y);
+        y += 6;
+      }
+      y += 4;
+    });
+  }
+
+  // Experience
+  if (resume.experience && resume.experience.length > 0) {
+    doc.setFontSize(14);
+    doc.text("Experience", 10, y);
+    y += 6;
+    doc.setFontSize(11);
+    resume.experience.forEach((exp) => {
+      doc.text(`${exp.jobTitle} at ${exp.companyName}`, 10, y);
+      y += 6;
+      if (exp.location) {
+        doc.text(`Location: ${exp.location}`, 10, y);
+        y += 6;
+      }
+      if (exp.startDate || exp.endDate) {
+        doc.text(
+          `Period: ${exp.startDate || ""} - ${exp.endDate || ""}`,
+          10,
+          y
+        );
+        y += 6;
+      }
+      doc.text("Responsibilities:", 10, y);
+      y += 6;
+      exp.responsibilities.forEach((resp) => {
+        doc.text(`- ${resp}`, 14, y);
+        y += 5;
+      });
+      y += 6;
+    });
+  }
+
+  // Projects (optional)
+  if (resume.projects && resume.projects.length > 0) {
+    doc.setFontSize(14);
+    doc.text("Projects", 10, y);
+    y += 6;
+    doc.setFontSize(11);
+    resume.projects.forEach((proj) => {
+      doc.text(proj.title, 10, y);
+      y += 6;
+      if (proj.description) {
+        doc.text(`Description: ${proj.description}`, 10, y);
+        y += 6;
+      }
+      if (proj.githubUrl) {
+        doc.text(`GitHub: ${proj.githubUrl}`, 10, y);
+        y += 6;
+      }
+      if (proj.demoUrl) {
+        doc.text(`Demo: ${proj.demoUrl}`, 10, y);
+        y += 6;
+      }
+      if (proj.additionalDetails) {
+        doc.text(`Details: ${proj.additionalDetails}`, 10, y);
+        y += 6;
+      }
+      y += 4;
+    });
+  }
+
+  // Certifications (optional)
+  if (resume.certifications && resume.certifications.length > 0) {
+    doc.setFontSize(14);
+    doc.text("Certifications", 10, y);
+    y += 6;
+    doc.setFontSize(11);
+    resume.certifications.forEach((cert) => {
+      doc.text(`- ${cert}`, 10, y);
+      y += 5;
+    });
+    y += 6;
+  }
+
+  // Languages (optional)
+  if (resume.languages && resume.languages.length > 0) {
+    doc.setFontSize(14);
+    doc.text("Languages", 10, y);
+    y += 6;
+    doc.setFontSize(11);
+    resume.languages.forEach((lang) => {
+      doc.text(`${lang.language} - ${lang.proficiency}`, 10, y);
+      y += 5;
+    });
+    y += 6;
+  }
+
+  // Interests (optional)
+  if (resume.interests && resume.interests.length > 0) {
+    doc.setFontSize(14);
+    doc.text("Interests", 10, y);
+    y += 6;
+    doc.setFontSize(11);
+    doc.text(resume.interests.join(", "), 10, y);
+  }
+
+  return doc.output("blob");
+}
 
 export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([
@@ -15,6 +182,9 @@ export default function Chat() {
     },
   ]);
   const [currentMessage, setCurrentMessage] = useState<string>("");
+  const [blob, setBlob] = useState<Blob | null>(null);
+  const [url, setUrl] = useState<string | null>(null);
+  const doc = new jsPDF();
 
   return (
     <div className="w-[50%] mx-auto flex flex-col items-center h-[100vh] gap-2 py-4">
@@ -60,13 +230,28 @@ export default function Chat() {
             })
               .then((data) => data.json())
               .then((res: Message) => {
-                setMessages([...newArray, res]);
+                if (res.message.includes("/resume")) {
+                  console.log("its a resume");
+                  const resume: Resume = JSON.parse(res.message);
+                  setBlob(generateResumePDF(resume));
+                  setUrl(URL.createObjectURL(generateResumePDF(resume)));
+                  console.log("done");
+                } else setMessages([...newArray, res]);
               });
           }}
         >
           Send
         </Button>
       </div>
+      {url !== null && (
+        <a
+          onClick={() => URL.revokeObjectURL(url)}
+          download={"resume.pdf"}
+          href={url}
+        >
+          <Button>Download</Button>
+        </a>
+      )}
     </div>
   );
 }
