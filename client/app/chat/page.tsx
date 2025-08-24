@@ -243,10 +243,22 @@ export default function Chat() {
               .then((data) => data.json())
               .then((res: Message) => {
                 if (res.message.includes("/resume")) {
-                  console.log("its a resume");
-                  const resume: Resume = JSON.parse(res.message);
-                  setBlob(generateResumePDF(resume));
-                  setUrl(URL.createObjectURL(generateResumePDF(resume)));
+                  console.log(res.message);
+                  let jsonString = res.message.replace(/^\/resume/, "");
+                  const resume: Resume = JSON.parse(jsonString);
+
+                  const generatedPDF = generateResumePDF(resume);
+                  setBlob(generatedPDF);
+                  setUrl(URL.createObjectURL(generatedPDF));
+                  setMessages([
+                    ...newArray,
+                    {
+                      sentBy: "llm",
+                      message: `[Link to PDF](${URL.createObjectURL(
+                        generatedPDF
+                      )})`,
+                    },
+                  ]);
                   console.log("done");
                 } else setMessages([...newArray, res]);
               });
@@ -255,15 +267,6 @@ export default function Chat() {
           Send
         </Button>
       </div>
-      {url !== null && (
-        <a
-          onClick={() => URL.revokeObjectURL(url)}
-          download={"resume.pdf"}
-          href={url}
-        >
-          <Button>Download</Button>
-        </a>
-      )}
     </div>
   );
 }

@@ -29,8 +29,6 @@ const client = new MultiServerMCPClient({
 
 // Fetch tools from your MCP server
 const tools = await client.getTools();
-console.log(tools);
-
 
 // Bind tools to your LangChain agent
 const agent = createReactAgent({

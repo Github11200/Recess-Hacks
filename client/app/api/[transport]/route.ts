@@ -54,8 +54,8 @@ const handler = createMcpHandler(
           location: z.string().optional().describe("Location of the educational institution."),
           degree: z.string().describe("The degree earned or pursued, e.g., 'Bachelor of Science'."),
           major: z.string().optional().describe("Optional field for major or field of study, if applicable."),
-          startDate: z.date().optional().describe("The starting date of the educational program."),
-          endDate: z.union([z.date(), z.literal("Present")]).optional().describe("The completion date or 'Present' if currently enrolled."),
+          startDate: z.string().optional().describe("The starting date of the educational program."),
+          endDate: z.union([z.string(), z.literal("Present")]).optional().describe("The completion date or 'Present' if currently enrolled."),
           additionalDetails: z.string().optional().describe("Any extra information regarding education, such as honors, thesis, etc."),
         })).describe("Education history with details about schools and qualifications."),
         projects: z.array(z.object({
@@ -69,15 +69,17 @@ const handler = createMcpHandler(
           jobTitle: z.string().describe("Candidate’s official job title for this position."),
           companyName: z.string().describe("Name of the employer or organization."),
           location: z.string().optional().describe("Geographical location of the workplace."),
-          startDate: z.date().optional().describe("Employment start date."),
-          endDate: z.union([z.date(), z.literal("Present")]).optional().describe("Employment end date or 'Present' if still employed."),
+          startDate: z.string().optional().describe("Employment start date."),
+          endDate: z.union([z.string(), z.literal("Present")]).optional().describe("Employment end date or 'Present' if still employed."),
           responsibilities: z.array(z.string()).describe("List of main tasks, achievements, or responsibilities for the job."),
         })).describe("Professional experience, including previous job roles and responsibilities."),
         certifications: z.array(z.string()).optional().describe("Any additional certifications, courses, or credentials."),
       },
       async (resume: Resume) => {
+        console.log(resume);
+
         return {
-          content: [{ type: "json", text: JSON.stringify(resume) }]
+          content: [{ type: "text", text: "/resume" + JSON.stringify(resume) }]
         }
       }
     )
