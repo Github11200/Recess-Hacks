@@ -9,8 +9,8 @@ const handler = createMcpHandler(
       "scrapeLinkedIn",
       "Scrapes LinkedIn for jobs based on the input that was given.",
       {
-        location: z.string().describe("A message with the user's location. Ask the user if you don't have their location."),
-        jobTitle: z.string().describe("The title of the job, like \"Restuarant Cleaner.\" The more specific this is the better"),
+        location: z.string().describe("A message with the user's location. DO NOT USE THE TOOL IF YOU DON'T HAVE THE USER'S LOCATION."),
+        jobTitle: z.string().describe("The title of the job, like \"Restuarant Cleaner.\" DO NOT USE THE TOOL IF YOU DON'T HAVE THE TITLE OF THE JOB THE USER IS LOOKNG FOR."),
       },
       async ({ location, jobTitle }) => {
         let params: Params = {
@@ -40,7 +40,7 @@ const handler = createMcpHandler(
             console.log("shortened: " + shortenedDescription);
             ++i
           }
-          jobsString += "]"
+          jobsString += "] DO NOT MODIFY THIS STRING AT ALL."
 
           return {
             content: [{ type: "text", text: jobsString }],
