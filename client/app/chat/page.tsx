@@ -18,21 +18,8 @@ import { jsPDF } from "jspdf";
 import { MdTextRender } from "jspdf-md-renderer";
 import parse from "html-react-parser";
 
-import { columns, Listing } from "./columns"
-import { DataTable } from "./data-table"
-
-async function getData(): Promise<Listing[]> {
-  // Data from chat bot goes here
-  return [
-    {
-        id: "",
-        title: "",
-        description: "",
-        company: "",
-        link: "",
-    },
-  ]
-}
+import { columns, Listing } from "./columns";
+import { DataTable } from "./data-table";
 
 function generateResumePDF(resume) {
   const doc = new jsPDF();
@@ -192,10 +179,21 @@ function generateResumePDF(resume) {
 }
 
 export default function Chat() {
+  const data = [
+    {
+      company: "company",
+      title: "title",
+      link: "link",
+      description: "description",
+    },
+  ];
+
   const [messages, setMessages] = useState<Message[]>([
     {
       sentBy: "llm",
-      message: "Hey there!",
+      message: "",
+      isTableData: true,
+      tableElement: <DataTable columns={columns} data={data} />,
     },
   ]);
   const [currentMessage, setCurrentMessage] = useState<string>("");
@@ -241,6 +239,15 @@ export default function Chat() {
             res.message.substring(res.message.indexOf("["))
           );
           console.log(data);
+          setMessages([
+            ...newArray,
+            {
+              sentBy: "llm",
+              message: "",
+              isTableData: true,
+              tableElement: <DataTable columns={columns} data={data} />,
+            },
+          ]);
         } else setMessages([...newArray, res]);
       });
   };
@@ -256,10 +263,12 @@ export default function Chat() {
                 messageObject.sentBy === "llm"
                   ? "bg-[var(--secondary)]"
                   : "border-1 border-gray"
-              } rounded-[var(--radius)]`}
+              } rounded-[var(--radius)] ${index !== 0 && "pt-2"}`}
             >
               {messageObject.sentBy === "llm" ? "Assistant" : "User"}:{" "}
-              {messageObject.message}
+              {messageObject.isTableData
+                ? messageObject.tableElement
+                : messageObject.message}
             </div>
           );
         })}
