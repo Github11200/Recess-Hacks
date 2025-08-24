@@ -19,6 +19,10 @@ let systemPromptString = `AI Assistant Prompt for Teen Job Search & Independence
                         <parameter_2>{parameter 2 goes here}</parameter_2>
                         ...
                       </tool_name>
+
+                      Here are the following tools:
+
+                      ${tools.map((tool, index) => { return `${index + 1}. ${tool}` })}
                       
                       You can utilize any of these tools at any point that seems relevant based on the user's prompt.`
 
