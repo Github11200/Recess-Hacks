@@ -17,6 +17,22 @@ import {
 import { jsPDF } from "jspdf";
 import { MdTextRender } from "jspdf-md-renderer";
 
+import { columns, Listing } from "./columns"
+import { DataTable } from "./data-table"
+
+async function getData(): Promise<Listing[]> {
+  // Data from chat bot goes here
+  return [
+    {
+        id: "",
+        title: "",
+        description: "",
+        company: "",
+        link: "",
+    },
+  ]
+}
+
 function generateResumePDF(resume) {
   const doc = new jsPDF();
 
