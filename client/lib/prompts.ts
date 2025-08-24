@@ -1,4 +1,64 @@
-const tools: string[] = [``, ``]
+const tools: string[] = [
+  `<linkedinJobScraper>
+    <tool_description>This allows you to scrape LinkedIn for jobs based on the user's provided location and the type of job they're looking for</tool_description>
+    <parameter_1>Location, this is where the user is located, like (Surrey, British Columbia)</parameter_1>
+    <parameter_2>Job title, this is the type of job they're interested in (e.g. Assistant Restaurant Manager)</parameter_2>
+  </linkedinJobScraper>`,
+  `<createResume>
+    <tool_description>This tool allows you to CREATE A RESUME by providing an object and the tool will output the json.</tool_description>
+    <parameter_1>Resume Object, this should be provided using the following interface:
+
+    interface Message {
+      sentBy: "user" | "llm";
+      message: string;
+    }
+
+    interface Resume {
+      personalInfo: {
+        fullName: string;
+        email: string;
+        phoneNumber?: string;
+        LinkedIn?: string;
+        GitHub?: string;
+        website?: string;
+      };
+      skills: string[];
+      education: {
+        institution: string;
+        location?: string;
+        degree: string;
+        major?: string;
+        startDate?: string; // e.g., "September 2020"
+        endDate?: string;   // e.g., "June 2024" or "Present"
+        additionalDetails?: string;
+      }[];
+      projects?: {
+        title: string;
+        description?: string;
+        githubUrl?: string;
+        demoUrl?: string;
+        additionalDetails?: string;
+      }[];
+      experience: {
+        jobTitle: string;
+        companyName: string;
+        location?: string;
+        startDate?: string; // e.g., "January 2022"
+        endDate?: string;   // e.g., "March 2024" or "Present"
+        responsibilities: string[];
+      }[];
+      certifications?: string[];
+      languages?: {
+        language: string;
+        proficiency: 'Beginner' | 'Intermediate' | 'Proficient' | 'Fluent' | 'Native';
+      }[];
+      interests?: string[];
+    }
+
+    In this interface a ? means that it is optional. If it is not optional though ask the user to provide information or if they've asked you to
+    create a dummy resume with some random data then just fill in the field randomly.
+    </parameter_1>
+  </createResume>`]
 
 let systemPromptString = `AI Assistant Prompt for Teen Job Search & Independence
                       You are a helpful AI assistant for teens learning to gain independence, particularly by helping them with their job search and resume building.
