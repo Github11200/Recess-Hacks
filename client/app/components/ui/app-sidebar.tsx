@@ -21,7 +21,7 @@ const items = [
     },
     {
       title: "Chatbot",
-      url: "/",
+      url: "/chat",
       icon: User,
     },
     {
