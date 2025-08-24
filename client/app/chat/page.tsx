@@ -262,7 +262,8 @@ export default function Chat() {
             res.message.lastIndexOf("}") + 1
           );
 
-          const resume: Resume = JSON.parse(data);
+          console.log(data);
+          const resume: Resume = JSON.parse(data).parameters;
 
           const generatedPDF = generateResumePDF(resume);
           setBlob(generatedPDF);

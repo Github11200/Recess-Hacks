@@ -6,7 +6,11 @@ import { jsPDF } from "jspdf";
 import LandingPage from "./landing/page";
 
 export default function Page() {
-  return <LandingPage />;
+  return (
+    <>
+      <LandingPage />
+    </>
+  );
 }
 
 // export default function HomePage() {
