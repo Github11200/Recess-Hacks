@@ -45,9 +45,11 @@ function generateResumePDF(resume: Resume) {
   // Skills
   if (resume.skills && resume.skills.length > 0) {
     doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
     doc.text("Skills", 10, y);
     y += 6;
     doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
     doc.text(resume.skills.join(", "), 10, y);
     y += 10;
   }
@@ -55,9 +57,11 @@ function generateResumePDF(resume: Resume) {
   // Education
   if (resume.education && resume.education.length > 0) {
     doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
     doc.text("Education", 10, y);
     y += 6;
     doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
     resume.education.forEach((ed) => {
       doc.text(
         `${ed.institution} - ${ed.degree}${ed.major ? ", " + ed.major : ""}`,
@@ -84,9 +88,11 @@ function generateResumePDF(resume: Resume) {
   // Experience
   if (resume.experience && resume.experience.length > 0) {
     doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
     doc.text("Experience", 10, y);
     y += 6;
     doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
     resume.experience.forEach((exp) => {
       doc.text(`${exp.jobTitle} at ${exp.companyName}`, 10, y);
       y += 6;
@@ -115,9 +121,11 @@ function generateResumePDF(resume: Resume) {
   // Projects (optional)
   if (resume.projects && resume.projects.length > 0) {
     doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
     doc.text("Projects", 10, y);
     y += 6;
     doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
     resume.projects.forEach((proj) => {
       doc.text(proj.title, 10, y);
       y += 6;
@@ -144,9 +152,11 @@ function generateResumePDF(resume: Resume) {
   // Certifications (optional)
   if (resume.certifications && resume.certifications.length > 0) {
     doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
     doc.text("Certifications", 10, y);
     y += 6;
     doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
     resume.certifications.forEach((cert) => {
       doc.text(`- ${cert}`, 10, y);
       y += 5;
@@ -157,9 +167,11 @@ function generateResumePDF(resume: Resume) {
   // Languages (optional)
   if (resume.languages && resume.languages.length > 0) {
     doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
     doc.text("Languages", 10, y);
     y += 6;
     doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
     resume.languages.forEach((lang) => {
       doc.text(`${lang.language} - ${lang.proficiency}`, 10, y);
       y += 5;
@@ -170,9 +182,11 @@ function generateResumePDF(resume: Resume) {
   // Interests (optional)
   if (resume.interests && resume.interests.length > 0) {
     doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
     doc.text("Interests", 10, y);
     y += 6;
     doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
     doc.text(resume.interests.join(", "), 10, y);
   }
 
