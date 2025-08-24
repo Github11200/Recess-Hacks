@@ -30,17 +30,21 @@ function generateResumePDF(resume: Resume) {
   doc.text(resume.personalInfo.name, 10, 20);
 
   doc.setFontSize(11);
-  doc.text(`Email: ${resume.personalInfo.email}`, 10, 30);
+  let personalInfo = [];
+  personalInfo.push(`Email: ${resume.personalInfo.email}`)
   if (resume.personalInfo.phone)
-    doc.text(`Phone: ${resume.personalInfo.phone}`, 10, 36);
+    personalInfo.push(`Phone: ${resume.personalInfo.phone}`);
   if (resume.personalInfo.LinkedIn)
-    doc.text(`LinkedIn: ${resume.personalInfo.LinkedIn}`, 10, 42);
+    personalInfo.push(`LinkedIn: ${resume.personalInfo.LinkedIn}`);
   if (resume.personalInfo.GitHub)
-    doc.text(`GitHub: ${resume.personalInfo.GitHub}`, 10, 48);
+    personalInfo.push(`GitHub: ${resume.personalInfo.GitHub}`);
   if (resume.personalInfo.website)
-    doc.text(`Website: ${resume.personalInfo.website}`, 10, 54);
+    personalInfo.push(`Website: ${resume.personalInfo.website}`);
+  let personalInfoLine = personalInfo.join(" | ");
 
-  let y = 65;
+  doc.text(personalInfoLine, 10, 30);
+
+  let y = 41;
 
   // Skills
   if (resume.skills && resume.skills.length > 0) {
