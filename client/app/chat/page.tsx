@@ -186,15 +186,27 @@ export default function Chat() {
   const [url, setUrl] = useState<string | null>(null);
   const doc = new jsPDF();
 
+export default function Chat() {
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      sentBy: "llm",
+      message: "Hey there!",
+    },
+  ]);
+  const [currentMessage, setCurrentMessage] = useState<string>("");
+  const [blob, setBlob] = useState<Blob | null>(null);
+  const [url, setUrl] = useState<string | null>(null);
+  const doc = new jsPDF();
+
   return (
     <div className="w-[50%] mx-auto flex flex-col items-center h-[100vh] gap-2 py-4">
-      <div className="w-full h-full bg-gray-500 rounded-[var(--radius)] overflow-y-scroll p-4">
+      <div className="w-full h-full bg-[var(--card-primary)] rounded-[var(--radius)] overflow-y-scroll p-4 border-3 border-gray">
         {messages.map((messageObject, index) => {
           return (
             <div
               key={index}
               className={`p-2 ${
-                messageObject.sentBy === "llm" ? "bg-gray-300" : "bg-gray-50"
+                messageObject.sentBy === "llm" ? "bg-[var(--secondary)]" : "bg-gray-300"
               } rounded-[var(--radius)]`}
             >
               {messageObject.sentBy === "llm" ? "Assistant" : "User"}:{" "}
