@@ -25,3 +25,8 @@ Teens spend a fair bit of time on their phones, specifically with chat interface
 It uses agents created using Langchain to interface over an MCP server so it can use tools that do things like scrape LinkedIn for data. Here's a little diagram:
 
 <img width="881" height="1133" alt="image" src="https://github.com/user-attachments/assets/420f295d-a4c7-4528-89c7-e1d148c1eaea" />
+
+# Got any questions?
+Feel free to contact us via any of these contact methods:
+- Email: jinayunity22@gmail.com, nimidfish@hotmail.com
+- Discords: aperson3370, kfcruan
