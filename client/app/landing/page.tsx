@@ -2,7 +2,7 @@ export default function Page() {
   return (
     <main className="max-w-2xl mx-auto p-6">
       <h1 className="text-3xl font-bold">JobAI</h1>
-      <h2 className="text-xl text-gray-600 mt-2">
+      <h2 className="text-xl text-gray-400 mt-2">
         For the next generation to find their place in the world
       </h2>
       <div className="mt-6">

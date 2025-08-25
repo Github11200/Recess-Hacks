@@ -48,11 +48,22 @@ export async function POST(request: NextRequest) {
 
   console.log(messages[messages.length - 1]);
 
-  const agentOutput = await agent.invoke({
-    messages: [systemPrompt, ...messages.map((msg) => ({
+  const filteredMessages = messages.map((msg) => {
+    if (msg.isJsxElement)
+      return {
+        role: msg.sentBy === "llm" ? "assistant" : "user",
+        content: "The message was a JSX element for either a table of jobs you had previously returned for a button for downloading a resume so it was filtered out."
+      }
+    return {
       role: msg.sentBy === "llm" ? "assistant" : "user",
       content: msg.message,
-    }))],
+    }
+  })
+
+  console.log(filteredMessages);
+
+  const agentOutput = await agent.invoke({
+    messages: [systemPrompt, ...filteredMessages],
   });
 
   return new NextResponse(JSON.stringify({ sentBy: "llm", message: agentOutput.messages[agentOutput.messages.length - 1].content.toString() }))

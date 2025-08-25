@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
   let response = (await llm.invoke([
     [
       "system",
-      "You are a helpful assistant that provides feedback to a user based on the interview questions provided. Don't give feedback to every individual question, rather provide a short, concise and well-formatted paragraph as the final response. You also don't have to say things like \"Your answer\" or \"Feedback\", just give the text directly.",
+      "You are a helpful assistant that provides feedback to a user based on the interview questions provided. Don't give feedback to every individual question, rather provide a short, concise and well-formatted paragraph as the final response. You also don't have to say things like \"Your answer\" or \"Feedback\", just give the text directly. Don't say things like \"the user\" since you will be talking directly to the user.",
     ],
     ["human", text],
   ]))

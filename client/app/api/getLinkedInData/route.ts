@@ -64,6 +64,7 @@ export async function POST(request: NextRequest) {
     // @ts-ignore
     const jobs: Job[] = await page.$$eval(".job-search-card", elements => {
       let jobsArray: Job[] = []
+      let i = 0;
       for (let job of elements) {
         const link = job.querySelector("a.base-card__full-link");
         const jobEntry: Job = {
@@ -75,15 +76,17 @@ export async function POST(request: NextRequest) {
         }
 
         jobsArray.push(jobEntry)
-        // TODO: Remove this to get all the jobs
-        break;
+
+        if (i == 4)
+          break;
+        ++i
       }
       return jobsArray
     })
 
     const turndownService = new TurndownService()
     // TODO: Change this from 3 so that you can have more jobs at once
-    for (let i = 0; i < 1; ++i) {
+    for (let i = 0; i < jobs.length; ++i) {
       await page.goto(`https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/${jobs[i].id}`)
 
       const description = await page.evaluate(() => {

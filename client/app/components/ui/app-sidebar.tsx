@@ -26,11 +26,6 @@ const items = [
     url: "/chat",
     icon: User,
   },
-  {
-    title: "Ongoing Job Applications",
-    url: "/jobs",
-    icon: BookCheck,
-  },
 ];
 
 export function AppSidebar() {

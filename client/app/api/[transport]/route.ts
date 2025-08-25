@@ -97,24 +97,28 @@ const handler = createMcpHandler(
       }
     ),
       // @ts-ignore
-      server.tool(
-        "createEmailDraft",
-        "This will create an email draft on the user's email so that they can send it to whatever company they are reaching out to.",
-        {
-          recepient: z.string().describe("This is the email address of who will recieve the email, e.g. hiringmanager@asana.com"),
-          subject: z.string().describe("This is the subject of the email"),
-          body: z.string().describe("This is the body of the email")
-        },
-        async ({ recepient, subject, body }) => {
-          const responseText = await fetch("http://localhost:3000/api/createEmail", {
-            body: JSON.stringify({ recepient: recepient, subject: subject, body: body }),
-            method: "POST"
-          }).then((res) => res.text())
-          return {
-            content: [{ type: "text", text: responseText }]
-          }
-        }
-      ),
+      // server.tool(
+      //   "addApplication",
+      //   "If the user has submitted an application to the company then this adds it to IndexedDB to be displayed for the user.",
+      //   {
+      //     jobTitle: z.string().describe("The title of the job, e.g. Resturant manager, Software engineer, etc."),
+      //     company: z.string().describe("The name of the company"),
+      //     link: z.string().describe("The link to the LinkedIn page from where the information was originally scraped"),
+      //     description: z.string().describe("The description of the job, e.g. As a software engineer you'll be focused on creating/maintaining infrastructure")
+      //   },
+      //   async ({ jobTitle, company, link, description }) => {
+      //     const listing: Listing = {
+      //       title: jobTitle,
+      //       company: company,
+      //       link: link,
+      //       status: "Applied",
+      //       description: description
+      //     }
+      //     return {
+      //       content: [{ type: "text", text: "/addApplication" + JSON.stringify(listing) }]
+      //     }
+      //   }
+      // ),
       // @ts-ignore
       server.tool(
         "interviewQuestions",
@@ -138,9 +142,6 @@ const handler = createMcpHandler(
         },
         generateResume: {
           description: "Generates some JSON data of a resume based on the schema given. You can provide dummy data or real data depending on what the user wants."
-        },
-        createEmailDraft: {
-          description: "This is create an email draft in the user's email."
         },
         interviewQuestions: {
           description: "This will allow you to generate a list of interview questions to ask the user so that they can practice before going into an actual job interview."

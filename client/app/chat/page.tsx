@@ -31,7 +31,8 @@ function generateResumePDF(resume: Resume) {
 
   doc.setFontSize(11);
   let personalInfo = [];
-  personalInfo.push(`Email: ${resume.personalInfo.email}`)
+  personalInfo.push(`Email: ${resume.personalInfo.email}`);
+
   if (resume.personalInfo.phone)
     personalInfo.push(`Phone: ${resume.personalInfo.phone}`);
   if (resume.personalInfo.LinkedIn)
@@ -41,6 +42,7 @@ function generateResumePDF(resume: Resume) {
   if (resume.personalInfo.website)
     personalInfo.push(`Website: ${resume.personalInfo.website}`);
   let personalInfoLine = personalInfo.join(" | ");
+  doc.text(personalInfoLine, 10, 30);
 
   doc.text(personalInfoLine, 10, 30);
 
@@ -239,12 +241,21 @@ export default function Chat() {
         if (res.message.includes("/table")) {
           console.log(res.message.substring(res.message.indexOf("[")));
 
-          const data = JSON.parse(
-            res.message.substring(
+          let data = null;
+
+          try {
+            data = JSON.parse(
+              res.message.substring(
+                res.message.indexOf("["),
+                res.message.lastIndexOf("]") + 1
+              )
+            );
+          } catch (err) {
+            data = res.message.substring(
               res.message.indexOf("["),
               res.message.lastIndexOf("]") + 1
-            )
-          );
+            );
+          }
           console.log(data);
           setMessages([
             ...newArray,
@@ -261,8 +272,7 @@ export default function Chat() {
             res.message.indexOf("{"),
             res.message.lastIndexOf("}") + 1
           );
-
-          console.log(data);
+          
           const resume: Resume = JSON.parse(data).parameters;
 
           const generatedPDF = generateResumePDF(resume);
